@@ -46,7 +46,7 @@ public class Main {
         logger.info("{} QPS", count / duration);
     }
 
-    private static void delegate(BaseTask ... tasks) {
+    private static void delegate(BaseTask... tasks) {
         for (BaseTask task : tasks) {
             logger.debug("run task {}", task.toString());
 
@@ -56,10 +56,10 @@ public class Main {
                     task.getPageClass());
 
             spider.addUrl(task.getUrl());
-            spider.setEmptySleepTime(2000);
-            spider.thread(20);
+            spider.setEmptySleepTime(1000);
+            spider.thread(10);
             spider.run();
-            assert(spider.getStatus() == Spider.Status.Stopped);
+            assert (spider.getStatus() == Spider.Status.Stopped);
             spider.close();
         }
     }

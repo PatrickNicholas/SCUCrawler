@@ -20,17 +20,17 @@ public class XGBPage implements BasePage {
     String url;
 
     @Formatter(formatter = HtmlEscapeFormatter.class)
-    @ExtractBy(value="//h1[@class='v-info-tle']/text()")
+    @ExtractBy(value = "//h1[@class='v-info-tle']/text()")
     String title;
 
     @Formatter(formatter = HtmlEscapeFormatter.class)
-    @ExtractBy(value="//div[@class='v-info-content']/html()")
+    @ExtractBy(value = "//div[@class='v-info-content']/html()")
     String content;
 
-    @ExtractBy(value="//p[@class='u-down-attach']//a/text()")
+    @ExtractBy(value = "//p[@class='u-down-attach']//a/text()")
     List<String> attachmentName;
 
-    @ExtractBy(value="//p[@class='u-down-attach']//a/@href")
+    @ExtractBy(value = "//p[@class='u-down-attach']//a/@href")
     List<String> attachmentUrl;
 
     @Override

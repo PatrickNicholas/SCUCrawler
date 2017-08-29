@@ -5,7 +5,7 @@ import net.hashcoding.code.scucrawler.task.pages.QCCDPage;
 import us.codecraft.webmagic.Site;
 
 public class QCCDAnnounceTask implements BaseTask {
-    public final static String [] QCCDAnnounceStartUrls = {
+    public final static String[] QCCDAnnounceStartUrls = {
             "http://youth.scu.edu.cn/index.php/main/web/notice/",
     };
 

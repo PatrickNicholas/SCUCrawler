@@ -6,14 +6,14 @@ import java.io.IOException;
 
 public class HtmlToMarkdownSolver implements PageSolver {
 
-	public String solve(String content) {
-		try {
-			return HtmlToMarkdown.convertHtml(content, "GBK");
-		} catch (IOException e) {
-			// ignore
-			e.printStackTrace();
-			return null;
-		}
-	}
+    public String solve(String content) {
+        try {
+            return HtmlToMarkdown.convertHtml(content, "GBK");
+        } catch (IOException e) {
+            // ignore
+            e.printStackTrace();
+            return null;
+        }
+    }
 
 }

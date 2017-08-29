@@ -5,9 +5,10 @@ import net.hashcoding.code.scucrawler.task.pages.CSPage;
 import us.codecraft.webmagic.Site;
 
 public class CSTextNewsTask implements BaseTask {
-    public final static String [] CSTextNewsStarUrls = {
+    public final static String[] CSTextNewsStarUrls = {
             "http://cs.scu.edu.cn/cs/xyxw/H9501index_1.htm",
     };
+
     @Override
     public Site getSite() {
         return Site.me()

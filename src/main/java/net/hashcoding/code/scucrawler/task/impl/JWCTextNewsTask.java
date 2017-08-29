@@ -5,7 +5,7 @@ import net.hashcoding.code.scucrawler.task.pages.JWCPage;
 import us.codecraft.webmagic.Site;
 
 public class JWCTextNewsTask implements BaseTask {
-    public final static String [] JWCTextNewsStarUrls = {
+    public final static String[] JWCTextNewsStarUrls = {
             "http://jwc.scu.edu.cn/jwc/moreNews.action",
             "http://jwc.scu.edu.cn/jwc/moreNews.action?pager.pageNow=2",
     };

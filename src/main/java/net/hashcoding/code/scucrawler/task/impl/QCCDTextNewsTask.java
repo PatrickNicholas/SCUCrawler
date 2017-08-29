@@ -5,7 +5,7 @@ import net.hashcoding.code.scucrawler.task.pages.QCCDPage;
 import us.codecraft.webmagic.Site;
 
 public class QCCDTextNewsTask implements BaseTask {
-    public final static String [] QCCDTextNewsStarUrls = {
+    public final static String[] QCCDTextNewsStarUrls = {
             "http://youth.scu.edu.cn/index.php/main/web/news-group/",
             "http://youth.scu.edu.cn/index.php/main/web/courtyard-style/",
     };

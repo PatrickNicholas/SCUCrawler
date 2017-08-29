@@ -4,6 +4,8 @@ import us.codecraft.webmagic.Site;
 
 public interface BaseTask {
     Site getSite();
-    String [] getUrl();
+
+    String[] getUrl();
+
     Class getPageClass();
 }

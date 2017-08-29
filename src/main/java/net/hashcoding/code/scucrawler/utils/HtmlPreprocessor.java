@@ -49,7 +49,7 @@ public class HtmlPreprocessor {
 
         Elements images = root.select("a");
         images.forEach((Element element) ->
-            element.attr("href", element.absUrl("href"))
+                element.attr("href", element.absUrl("href"))
         );
 
         page.content = root.toString();

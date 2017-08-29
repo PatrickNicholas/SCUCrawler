@@ -11,11 +11,11 @@ public class Page {
     public List<Attachment> attachments;
 
     public static Page create(String url,
-                       String thumb,
-                       String title,
-                       String content,
-                       List<String> attachmentUrls,
-                       List<String> attachmentName) {
+                              String thumb,
+                              String title,
+                              String content,
+                              List<String> attachmentUrls,
+                              List<String> attachmentName) {
         Page page = new Page();
         page.url = url;
         page.thumbnail = thumb;

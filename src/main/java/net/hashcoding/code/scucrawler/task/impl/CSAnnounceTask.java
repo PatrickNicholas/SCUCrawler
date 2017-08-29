@@ -6,7 +6,7 @@ import us.codecraft.webmagic.Site;
 
 public class CSAnnounceTask implements BaseTask {
 
-    public static final String [] StartUrls = {
+    public static final String[] StartUrls = {
             "http://cs.scu.edu.cn/cs/xytz/H9502index_1.htm",
     };
 

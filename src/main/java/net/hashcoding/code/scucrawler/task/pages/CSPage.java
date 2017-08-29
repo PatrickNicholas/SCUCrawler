@@ -24,11 +24,11 @@ public class CSPage implements BasePage {
     String url;
 
     @Formatter(formatter = HtmlEscapeFormatter.class)
-    @ExtractBy(value="//table[@class='pcenter_t2']/allText()")
+    @ExtractBy(value = "//table[@class='pcenter_t2']/allText()")
     String title;
 
     @Formatter(formatter = HtmlEscapeFormatter.class)
-    @ExtractBy(value="//div[@id='BodyLabel']/html()")
+    @ExtractBy(value = "//div[@id='BodyLabel']/html()")
     String content;
 
     //@ExtractBy(value="//body/table[4]//a/text()")

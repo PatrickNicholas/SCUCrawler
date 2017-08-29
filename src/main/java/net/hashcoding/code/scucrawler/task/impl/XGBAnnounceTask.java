@@ -5,7 +5,7 @@ import net.hashcoding.code.scucrawler.task.pages.XGBPage;
 import us.codecraft.webmagic.Site;
 
 public class XGBAnnounceTask implements BaseTask {
-    public final static String [] XGBAnnounceStartUrls = {
+    public final static String[] XGBAnnounceStartUrls = {
             "http://xsc.scu.edu.cn/P/PartialArticle?id=43&menu=43&rn=1",
             "http://xsc.scu.edu.cn/P/PartialArticle?id=43&menu=43&rn=2"
     };

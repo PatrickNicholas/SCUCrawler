@@ -24,19 +24,19 @@ public class QCCDPage implements BasePage {
     String url;
 
     @Formatter(formatter = HtmlEscapeFormatter.class)
-    @ExtractBy(value="//div[@class='content-art']/h1/text()")
+    @ExtractBy(value = "//div[@class='content-art']/h1/text()")
     String title;
 
     @Formatter(formatter = HtmlEscapeFormatter.class)
-    @ExtractBy(value="//div[@class='content-art']/div[@class='content-text']/html()")
+    @ExtractBy(value = "//div[@class='content-art']/div[@class='content-text']/html()")
     String content;
 
     // TODO:
-    @ExtractBy(value="//body/table[4]//a/text()")
+    @ExtractBy(value = "//body/table[4]//a/text()")
     List<String> attachmentName;
 
     // TODO:
-    @ExtractBy(value="//body/table[4]//a/@href")
+    @ExtractBy(value = "//body/table[4]//a/@href")
     List<String> attachmentUrl;
 
     @Override

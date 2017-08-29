@@ -75,12 +75,12 @@ public class PagePersistence {
     private static class Submitter implements Runnable {
         private Page page;
 
-        static Submitter create(Page page) {
-            return new Submitter(page);
-        }
-
         private Submitter(Page page) {
             this.page = page;
+        }
+
+        static Submitter create(Page page) {
+            return new Submitter(page);
         }
 
         @Override

@@ -13,19 +13,19 @@ public class JWCPage implements BasePage {
 
 	@ExtractByUrl(".*")
 	String url;
-	
+
 	@Formatter(formatter = HtmlEscapeFormatter.class)
-	@ExtractBy(value="//body/table[3]/tbody/tr[2]/td/b/text()")
+	@ExtractBy(value = "//body/table[3]/tbody/tr[2]/td/b/text()")
 	String title;
 
 	@Formatter(formatter = HtmlEscapeFormatter.class)
-	@ExtractBy(value="//input[@id='news_content']/@value")
+	@ExtractBy(value = "//input[@id='news_content']/@value")
 	String content;
 
-	@ExtractBy(value="//body/table[4]//a/text()")
+	@ExtractBy(value = "//body/table[4]//a/text()")
 	List<String> attachmentName;
-	
-	@ExtractBy(value="//body/table[4]//a/@href")
+
+	@ExtractBy(value = "//body/table[4]//a/@href")
 	List<String> attachmentUrl;
 
 	@Override

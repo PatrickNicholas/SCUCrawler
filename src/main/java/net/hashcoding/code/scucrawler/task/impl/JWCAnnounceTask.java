@@ -5,7 +5,7 @@ import net.hashcoding.code.scucrawler.task.pages.JWCPage;
 import us.codecraft.webmagic.Site;
 
 public class JWCAnnounceTask implements BaseTask {
-    public final static String [] JWCAnnounceStartUrls = {
+    public final static String[] JWCAnnounceStartUrls = {
             "http://jwc.scu.edu.cn/jwc/moreNotice.action",
             "http://jwc.scu.edu.cn/jwc/moreNotice.action?pager.pageNow=2",
     };

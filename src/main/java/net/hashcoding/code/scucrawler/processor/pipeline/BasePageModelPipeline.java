@@ -1,8 +1,8 @@
 package net.hashcoding.code.scucrawler.processor.pipeline;
 
-import net.hashcoding.code.scucrawler.utils.HtmlPreprocessor;
 import net.hashcoding.code.scucrawler.processor.PageFactory;
 import net.hashcoding.code.scucrawler.task.BasePage;
+import net.hashcoding.code.scucrawler.utils.HtmlPreprocessor;
 import us.codecraft.webmagic.Task;
 import us.codecraft.webmagic.pipeline.PageModelPipeline;
 
