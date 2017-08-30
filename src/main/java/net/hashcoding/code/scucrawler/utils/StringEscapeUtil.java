@@ -1,13 +1,26 @@
 package net.hashcoding.code.scucrawler.utils;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class StringEscapeUtil {
 
-    private static String[][] htmlEscape =
-            {{"&lt;", "<"}, {"&gt;", ">"},
-                    {"&amp;", "&"}, {"&quot;", "\""},
-                    {"&nbsp;", " "}, {"&copy;", "\u00a9"},
-                    {"&reg;", "\u00ae"}, {"&euro;", "\u20a0"}
+    private static String[][] htmlEscape = {
+            {"&lt;", "<"}, {"&gt;", ">"},
+            {"&amp;", "&"}, {"&quot;", "\""},
+            {"&nbsp;", " "}, {"&copy;", "\u00a9"},
+            {"&reg;", "\u00ae"}, {"&euro;", "\u20a0"},
             };
+
+    public static String unescapeFilename(String name) {
+        Pattern pattern = Pattern.compile("[\\s\\\\/:\\*\\?\\\"<>\\|]");
+        Matcher matcher = pattern.matcher(name);
+        return matcher.replaceAll(""); // 将匹配到的非法字符以空替换
+    }
+
+    public static String unescapeHTML(String s) {
+        return unescapeHTML(s, 0);
+    }
 
     public static final String unescapeHTML(String s, int start) {
         int i, j, k;

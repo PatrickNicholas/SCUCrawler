@@ -2,8 +2,10 @@ package net.hashcoding.code.scucrawler.task.pages;
 
 import net.hashcoding.code.scucrawler.entity.Page;
 import net.hashcoding.code.scucrawler.task.BasePage;
-import net.hashcoding.code.scucrawler.utils.HtmlEscapeFormatter;
-import us.codecraft.webmagic.model.annotation.*;
+import us.codecraft.webmagic.model.annotation.ExtractBy;
+import us.codecraft.webmagic.model.annotation.ExtractByUrl;
+import us.codecraft.webmagic.model.annotation.HelpUrl;
+import us.codecraft.webmagic.model.annotation.TargetUrl;
 
 import java.util.List;
 
@@ -14,11 +16,11 @@ public class JWCPage implements BasePage {
 	@ExtractByUrl(".*")
 	String url;
 
-	@Formatter(formatter = HtmlEscapeFormatter.class)
+	// @Formatter(formatter = HtmlEscapeFormatter.class)
 	@ExtractBy(value = "//body/table[3]/tbody/tr[2]/td/b/text()")
 	String title;
 
-	@Formatter(formatter = HtmlEscapeFormatter.class)
+	// @Formatter(formatter = HtmlEscapeFormatter.class)
 	@ExtractBy(value = "//input[@id='news_content']/@value")
 	String content;
 

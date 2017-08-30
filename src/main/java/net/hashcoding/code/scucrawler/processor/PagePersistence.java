@@ -2,6 +2,7 @@ package net.hashcoding.code.scucrawler.processor;
 
 import net.hashcoding.code.scucrawler.entity.Page;
 
+import java.io.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -85,7 +86,17 @@ public class PagePersistence {
 
         @Override
         public void run() {
-            System.out.println("title: " + page.title);
+            File file = new File("D:\\md\\" + page.title + ".html");
+            try {
+                OutputStream stream = new FileOutputStream(file);
+                OutputStreamWriter writer = new OutputStreamWriter(stream);
+                writer.write(page.content);
+                writer.flush();
+                writer.close();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

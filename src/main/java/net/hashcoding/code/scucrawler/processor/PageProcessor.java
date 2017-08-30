@@ -2,6 +2,7 @@ package net.hashcoding.code.scucrawler.processor;
 
 import net.hashcoding.code.scucrawler.entity.Page;
 import net.hashcoding.code.scucrawler.utils.HtmlPreprocessor;
+import net.hashcoding.code.scucrawler.utils.StringEscapeUtil;
 
 public class PageProcessor implements Runnable {
     private String host;
@@ -18,6 +19,7 @@ public class PageProcessor implements Runnable {
     public void run() {
         pretreatment();
         solve();
+        postTreatment();
         PagePersistence.submit(page);
     }
 
@@ -26,6 +28,13 @@ public class PageProcessor implements Runnable {
         HtmlPreprocessor.hyperlinksAddHost(page, host);
         HtmlPreprocessor.processOmitsAttachments(page);
         HtmlPreprocessor.attachmentAddHost(page, host);
+
+        page.title = StringEscapeUtil.unescapeHTML(page.title);
+        page.content = StringEscapeUtil.unescapeHTML(page.content);
+    }
+
+    private void postTreatment() {
+        page.title = StringEscapeUtil.unescapeFilename(page.title);
     }
 
     private void solve() {

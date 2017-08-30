@@ -3,8 +3,7 @@ package net.hashcoding.code.scucrawler;
 import net.hashcoding.code.scucrawler.processor.PageFactory;
 import net.hashcoding.code.scucrawler.processor.PagePersistence;
 import net.hashcoding.code.scucrawler.processor.pipeline.BasePageModelPipeline;
-import net.hashcoding.code.scucrawler.processor.solver.HtmlToMarkdownSolver;
-import net.hashcoding.code.scucrawler.processor.solver.MarkdownToHtmlSolver;
+import net.hashcoding.code.scucrawler.processor.solver.HtmlBeautySolver;
 import net.hashcoding.code.scucrawler.task.BaseTask;
 import net.hashcoding.code.scucrawler.task.impl.*;
 import org.slf4j.Logger;
@@ -21,8 +20,7 @@ public class Main {
         long beginAt = System.currentTimeMillis();
         logger.debug("setup Page Factory with solver");
 
-        PageFactory.push(new HtmlToMarkdownSolver());
-        PageFactory.push(new MarkdownToHtmlSolver());
+        PageFactory.push(new HtmlBeautySolver());
 
         logger.debug("delegate some tasks");
         delegate(new CSAnnounceTask(),
