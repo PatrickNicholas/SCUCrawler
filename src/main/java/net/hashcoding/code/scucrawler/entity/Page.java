@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Page {
+    public String type;
     public String url;
     public String thumbnail;
     public String title;
@@ -17,6 +18,7 @@ public class Page {
                               List<String> attachmentUrls,
                               List<String> attachmentName) {
         Page page = new Page();
+        page.type = "";
         page.url = url;
         page.thumbnail = thumb;
         page.title = title;
