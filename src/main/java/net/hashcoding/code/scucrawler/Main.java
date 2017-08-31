@@ -1,11 +1,12 @@
 package net.hashcoding.code.scucrawler;
 
-import net.hashcoding.code.scucrawler.processor.PageFactory;
-import net.hashcoding.code.scucrawler.processor.PagePersistence;
-import net.hashcoding.code.scucrawler.processor.pipeline.BasePageModelPipeline;
-import net.hashcoding.code.scucrawler.processor.solver.HtmlBeautySolver;
-import net.hashcoding.code.scucrawler.task.BaseTask;
-import net.hashcoding.code.scucrawler.task.impl.*;
+import net.hashcoding.code.scucrawler.crawler.ArticleScheduler;
+import net.hashcoding.code.scucrawler.crawler.processor.PageFactory;
+import net.hashcoding.code.scucrawler.crawler.processor.PagePersistence;
+import net.hashcoding.code.scucrawler.crawler.processor.pipeline.BasePageModelPipeline;
+import net.hashcoding.code.scucrawler.crawler.processor.solver.HtmlBeautySolver;
+import net.hashcoding.code.scucrawler.crawler.task.BaseTask;
+import net.hashcoding.code.scucrawler.crawler.task.impl.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import us.codecraft.webmagic.Spider;
@@ -40,19 +41,20 @@ public class Main {
 
         long endAt = System.currentTimeMillis();
         int count = PagePersistence.count();
-        long duration = TimeUnit.MILLISECONDS.toSeconds(endAt - beginAt + 1);
+        long duration = TimeUnit.MILLISECONDS.toSeconds(endAt - beginAt) + 1;
         logger.info("{} QPS", count / duration);
     }
 
     private static void delegate(BaseTask... tasks) {
+        ArticleScheduler scheduler = new ArticleScheduler();
         for (BaseTask task : tasks) {
             logger.debug("run task {}", task.toString());
 
             Spider spider = OOSpider.create(
                     task.getSite(),
-                    new BasePageModelPipeline(),
+                    new BasePageModelPipeline(task.getType()),
                     task.getPageClass());
-
+            spider.setScheduler(scheduler);
             spider.addUrl(task.getUrl());
             spider.setEmptySleepTime(1000);
             spider.thread(10);

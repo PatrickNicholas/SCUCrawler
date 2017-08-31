@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hashcoding.code.scucrawler.db.mapper.ArticleTypeMapper">
+    <resultMap id="baseResultMap" type="ArticleType">
+        <id property="typeId" column="type_id"/>
+        <result property="name" column="name"/>
+    </resultMap>
+
+    <select id="selectWithName" resultMap="baseResultMap" parameterType="java.lang.String">
+        SELECT type_id, name
+        FROM article_type
+        WHERE internal_name = #{name}
+    </select>
+
+    <select id="list" resultMap="baseResultMap">
+        SELECT type_id, name
+        FROM article_type
+    </select>
+
+</mapper>

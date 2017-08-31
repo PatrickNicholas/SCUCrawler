@@ -1,4 +1,4 @@
-package net.hashcoding.code.scucrawler.processor;
+package net.hashcoding.code.scucrawler.crawler.processor;
 
 import net.hashcoding.code.scucrawler.entity.Page;
 
@@ -86,6 +86,12 @@ public class PagePersistence {
 
         @Override
         public void run() {
+//            ArticleAPI.insertOrUpdate(
+//                    page.url,
+//                    page.type,
+//                    page.thumbnail,
+//                    page.title,
+//                    page.content);
             File file = new File("D:\\md\\" + page.title + ".html");
             try {
                 OutputStream stream = new FileOutputStream(file);
@@ -93,7 +99,6 @@ public class PagePersistence {
                 writer.write(page.content);
                 writer.flush();
                 writer.close();
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
