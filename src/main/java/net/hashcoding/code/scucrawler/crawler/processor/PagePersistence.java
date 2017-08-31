@@ -1,8 +1,8 @@
 package net.hashcoding.code.scucrawler.crawler.processor;
 
+import net.hashcoding.code.scucrawler.db.ArticleAPI;
 import net.hashcoding.code.scucrawler.entity.Page;
 
-import java.io.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -86,22 +86,22 @@ public class PagePersistence {
 
         @Override
         public void run() {
-//            ArticleAPI.insertOrUpdate(
-//                    page.url,
-//                    page.type,
-//                    page.thumbnail,
-//                    page.title,
-//                    page.content);
-            File file = new File("D:\\md\\" + page.title + ".html");
-            try {
-                OutputStream stream = new FileOutputStream(file);
-                OutputStreamWriter writer = new OutputStreamWriter(stream);
-                writer.write(page.content);
-                writer.flush();
-                writer.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            ArticleAPI.insertOrUpdate(
+                    page.url,
+                    page.type,
+                    page.thumbnail,
+                    page.title,
+                    page.content);
+//            File file = new File("D:\\md\\" + page.title + ".html");
+//            try {
+//                OutputStream stream = new FileOutputStream(file);
+//                OutputStreamWriter writer = new OutputStreamWriter(stream);
+//                writer.write(page.content);
+//                writer.flush();
+//                writer.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
         }
     }
 }
