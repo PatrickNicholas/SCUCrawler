@@ -6,7 +6,10 @@ import net.hashcoding.code.scucrawler.crawler.processor.PagePersistence;
 import net.hashcoding.code.scucrawler.crawler.processor.pipeline.BasePageModelPipeline;
 import net.hashcoding.code.scucrawler.crawler.processor.solver.HtmlBeautySolver;
 import net.hashcoding.code.scucrawler.crawler.task.BaseTask;
-import net.hashcoding.code.scucrawler.crawler.task.impl.*;
+import net.hashcoding.code.scucrawler.crawler.task.impl.CSAnnounceTask;
+import net.hashcoding.code.scucrawler.crawler.task.impl.JWCAnnounceTask;
+import net.hashcoding.code.scucrawler.crawler.task.impl.QCCDAnnounceTask;
+import net.hashcoding.code.scucrawler.crawler.task.impl.XGBAnnounceTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import us.codecraft.webmagic.Spider;
@@ -25,13 +28,9 @@ public class Main {
 
         logger.debug("delegate some tasks");
         delegate(new CSAnnounceTask(),
-                new CSTextNewsTask(),
                 new JWCAnnounceTask(),
-                new JWCTextNewsTask(),
                 new QCCDAnnounceTask(),
-                new QCCDTextNewsTask(),
-                new XGBAnnounceTask(),
-                new XGBTextNewsTask());
+                new XGBAnnounceTask());
 
         logger.debug("wait for PageFactory close");
         PageFactory.exit();

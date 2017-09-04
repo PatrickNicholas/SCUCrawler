@@ -12,7 +12,7 @@ public class JWCAnnounceTask implements BaseTask {
 
     @Override
     public String getType() {
-        return "jwctz";
+        return "教务处";
     }
 
     @Override

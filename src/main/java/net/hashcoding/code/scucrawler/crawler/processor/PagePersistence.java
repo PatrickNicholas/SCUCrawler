@@ -1,7 +1,12 @@
 package net.hashcoding.code.scucrawler.crawler.processor;
 
-import net.hashcoding.code.scucrawler.db.ArticleAPI;
+import com.google.gson.Gson;
 import net.hashcoding.code.scucrawler.entity.Page;
+import net.hashcoding.code.scucrawler.network.Network;
+import net.hashcoding.code.scucrawler.network.service.ArticleService;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -74,10 +79,14 @@ public class PagePersistence {
     }
 
     private static class Submitter implements Runnable {
+        private static final Logger logger = LoggerFactory.getLogger(Submitter.class);
+
         private Page page;
+        private Gson gson;
 
         private Submitter(Page page) {
             this.page = page;
+            this.gson = new Gson();
         }
 
         static Submitter create(Page page) {
@@ -86,22 +95,23 @@ public class PagePersistence {
 
         @Override
         public void run() {
-            ArticleAPI.insertOrUpdate(
-                    page.url,
-                    page.type,
-                    page.thumbnail,
-                    page.title,
-                    page.content);
-//            File file = new File("D:\\md\\" + page.title + ".html");
-//            try {
-//                OutputStream stream = new FileOutputStream(file);
-//                OutputStreamWriter writer = new OutputStreamWriter(stream);
-//                writer.write(page.content);
-//                writer.flush();
-//                writer.close();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
+            ArticleService service = Network.getArticleService();
+            if (StringUtils.isEmpty(page.thumbnail)) {
+                page.thumbnail = "";
+            }
+            if (StringUtils.isEmpty(page.content)) {
+                page.content = "<<no data>>";
+            }
+            service.put(page.type, page.url, page.title, page.thumbnail, page.content)
+                    .flatMap(result -> {
+                        if (result.getCode() != 200) {
+                            throw new RuntimeException(result.getDetailMessage());
+                        }
+                        return service.updateAttachments(result.getData(), page.attachments);
+                    })
+                    .subscribe(stringResult -> {
+                            },
+                            throwable -> logger.error("save article failed", throwable));
         }
     }
 }
