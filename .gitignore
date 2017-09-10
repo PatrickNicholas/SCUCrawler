@@ -2,3 +2,9 @@
 *.iws
 /target
 /logs
+/META-INF
+
+*/Constant.java
+deploy.sh
+run.sh
+SCUCrawler.jar
