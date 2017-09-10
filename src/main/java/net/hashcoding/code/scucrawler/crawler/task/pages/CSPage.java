@@ -2,32 +2,41 @@ package net.hashcoding.code.scucrawler.crawler.task.pages;
 
 import net.hashcoding.code.scucrawler.crawler.task.BasePage;
 import net.hashcoding.code.scucrawler.entity.Page;
+import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.model.annotation.ExtractBy;
 import us.codecraft.webmagic.model.annotation.ExtractByUrl;
+import us.codecraft.webmagic.model.annotation.Formatter;
 import us.codecraft.webmagic.model.annotation.TargetUrl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
  * Created by Maochuan on 2016/11/4.
  */
 @TargetUrl(value = {
-        "http://cs.scu.edu.cn/cs/xytz/webinfo/*",
-        "http://cs.scu.edu.cn/cs/xyxw/webinfo/*",
+        "http://cs.scu.edu.cn/cs/xytz/webinfo/*"
 }, sourceRegion = "//table[@id='__01']//a")
 public class CSPage implements BasePage {
+
+    private static final String TYPE = "计算机学院通知";
+    private static final String[] START_URLS = {
+            "http://cs.scu.edu.cn/cs/xytz/H9502index_1.htm"
+    };
 
     @ExtractByUrl(".*")
     String url;
 
-    // @Formatter(formatter = HtmlEscapeFormatter.class)
     @ExtractBy(value = "//table[@class='pcenter_t2']/allText()")
     String title;
 
-    // @Formatter(formatter = HtmlEscapeFormatter.class)
     @ExtractBy(value = "//div[@id='BodyLabel']/html()")
     String content;
+
+    @Formatter("yyyy-MM-dd HH:mm")
+    @ExtractBy("//table[@id='__01']//span[@class='hangjc']/regex('\\d+-\\d+-\\d+\\s+\\d+:\\d+')")
+    Date createdAt;
 
     //@ExtractBy(value="//body/table[4]//a/text()")
     List<String> names = new ArrayList<>();
@@ -35,9 +44,30 @@ public class CSPage implements BasePage {
     //@ExtractBy(value="//body/table[4]//a/@href")
     List<String> urls = new ArrayList<>();
 
-
     @Override
     public Page getPage() {
-        return Page.create(url, "", title, content, urls, names);
+        return Page.create(
+                TYPE,
+                url,
+                "",
+                title,
+                content,
+                createdAt,
+                urls,
+                names);
+    }
+
+    @Override
+    public Site getSite() {
+        return Site.me()
+                .setRetrySleepTime(500)
+                .setRetryTimes(3)
+                .setSleepTime(50)
+                .setCharset("GBK");
+    }
+
+    @Override
+    public String[] getStartUrls() {
+        return START_URLS;
     }
 }
