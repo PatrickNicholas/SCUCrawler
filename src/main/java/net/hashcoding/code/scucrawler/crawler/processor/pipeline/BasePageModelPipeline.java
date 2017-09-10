@@ -13,17 +13,10 @@ import us.codecraft.webmagic.pipeline.PageModelPipeline;
 public class BasePageModelPipeline
         implements PageModelPipeline<BasePage> {
 
-    private String type;
-
-    public BasePageModelPipeline(String type) {
-        this.type = type;
-    }
-
     public void process(BasePage page, Task task) {
         String host = HtmlPreprocessor.getHostWithProtocol(
                 task.getSite().getDomain());
         Page target = page.getPage();
-        target.type = type;
         PageFactory.solve(host, target);
     }
 }

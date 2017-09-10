@@ -1,6 +1,7 @@
 package net.hashcoding.code.scucrawler.entity;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Page {
@@ -9,20 +10,25 @@ public class Page {
     public String thumbnail;
     public String title;
     public String content;
+    public Date createdAt;
     public List<Attachment> attachments;
 
-    public static Page create(String url,
-                              String thumb,
-                              String title,
-                              String content,
-                              List<String> attachmentUrls,
-                              List<String> attachmentName) {
+    public static Page create(
+            String type,
+            String url,
+            String thumb,
+            String title,
+            String content,
+            Date createdAt,
+            List<String> attachmentUrls,
+            List<String> attachmentName) {
         Page page = new Page();
-        page.type = "";
+        page.type = type;
         page.url = url;
         page.thumbnail = thumb;
         page.title = title;
         page.content = content;
+        page.createdAt = createdAt;
         page.attachments = new ArrayList<>();
         int size = attachmentName.size();
         for (int i = 0; i < size; ++i) {

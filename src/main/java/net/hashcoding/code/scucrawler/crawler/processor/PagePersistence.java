@@ -8,6 +8,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -95,14 +100,22 @@ public class PagePersistence {
 
         @Override
         public void run() {
-            ArticleService service = Network.getArticleService();
             if (StringUtils.isEmpty(page.thumbnail)) {
                 page.thumbnail = "";
             }
             if (StringUtils.isEmpty(page.content)) {
                 page.content = "<<no data>>";
             }
-            service.put(page.type, page.url, page.title, page.thumbnail, page.content)
+
+            send(page);
+            // writeToFile(page);
+        }
+
+        private void send(Page page) {
+            String createdAt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                    .format(page.createdAt);
+            ArticleService service = Network.getArticleService();
+            service.put(page.type, page.url, page.title, page.thumbnail, page.content, createdAt)
                     .flatMap(result -> {
                         if (result.getCode() != 200) {
                             throw new RuntimeException(result.getDetailMessage());
@@ -111,7 +124,20 @@ public class PagePersistence {
                     })
                     .subscribe(stringResult -> {
                             },
-                            throwable -> logger.error("save article failed", throwable));
+                            throwable -> logger.error("save article "
+                                    + page.url + "failed", throwable));
+        }
+
+        private void writeToFile(Page page) {
+            try {
+                OutputStream stream = new FileOutputStream("D:\\webmagic\\" + page.title + ".html");
+                OutputStreamWriter writer = new OutputStreamWriter(stream);
+                writer.write(page.content);
+                writer.flush();
+                writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

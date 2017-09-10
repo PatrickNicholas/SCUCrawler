@@ -4,12 +4,15 @@ import net.hashcoding.code.scucrawler.crawler.ArticleScheduler;
 import net.hashcoding.code.scucrawler.crawler.processor.PageFactory;
 import net.hashcoding.code.scucrawler.crawler.processor.PagePersistence;
 import net.hashcoding.code.scucrawler.crawler.processor.pipeline.BasePageModelPipeline;
+import net.hashcoding.code.scucrawler.crawler.processor.pipeline.BasePagePipeline;
 import net.hashcoding.code.scucrawler.crawler.processor.solver.HtmlBeautySolver;
-import net.hashcoding.code.scucrawler.crawler.task.BaseTask;
-import net.hashcoding.code.scucrawler.crawler.task.impl.CSAnnounceTask;
-import net.hashcoding.code.scucrawler.crawler.task.impl.JWCAnnounceTask;
-import net.hashcoding.code.scucrawler.crawler.task.impl.QCCDAnnounceTask;
-import net.hashcoding.code.scucrawler.crawler.task.impl.XGBAnnounceTask;
+import net.hashcoding.code.scucrawler.crawler.task.BasePage;
+import net.hashcoding.code.scucrawler.crawler.task.BasePageProcessor;
+import net.hashcoding.code.scucrawler.crawler.task.pages.CSPage;
+import net.hashcoding.code.scucrawler.crawler.task.pages.JWCPage;
+import net.hashcoding.code.scucrawler.crawler.task.pages.QCCDPage;
+import net.hashcoding.code.scucrawler.crawler.task.pages.XGBPage;
+import net.hashcoding.code.scucrawler.crawler.task.processor.EmployPageProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import us.codecraft.webmagic.Spider;
@@ -27,10 +30,13 @@ public class Main {
         PageFactory.push(new HtmlBeautySolver());
 
         logger.debug("delegate some tasks");
-        delegate(new CSAnnounceTask(),
-                new JWCAnnounceTask(),
-                new QCCDAnnounceTask(),
-                new XGBAnnounceTask());
+        delegate(
+                new CSPage(),
+                new JWCPage(),
+                new QCCDPage(),
+                new XGBPage()
+        );
+        delegate(new EmployPageProcessor());
 
         logger.debug("wait for PageFactory close");
         PageFactory.exit();
@@ -44,22 +50,35 @@ public class Main {
         logger.info("{} QPS", count / duration);
     }
 
-    private static void delegate(BaseTask... tasks) {
-        ArticleScheduler scheduler = new ArticleScheduler();
-        for (BaseTask task : tasks) {
-            logger.debug("run task {}", task.toString());
+    private static void delegate(BasePage... pages) {
+        ArticleScheduler scheduler = new ArticleScheduler(5, TimeUnit.SECONDS);
+        BasePageModelPipeline pipeline = new BasePageModelPipeline();
+        for (BasePage page : pages) {
+            logger.debug("run task {}", page.toString());
 
-            Spider spider = OOSpider.create(
-                    task.getSite(),
-                    new BasePageModelPipeline(task.getType()),
-                    task.getPageClass());
-            spider.setScheduler(scheduler);
-            spider.addUrl(task.getUrl());
-            spider.setEmptySleepTime(1000);
-            spider.thread(10);
-            spider.run();
-            assert (spider.getStatus() == Spider.Status.Stopped);
-            spider.close();
+            Spider spider = OOSpider.create(page.getSite(), pipeline, page.getClass())
+                    .setScheduler(scheduler)
+                    .addUrl(page.getStartUrls());
+            runAndWaitSpiderDone(spider);
         }
+    }
+
+    private static void delegate(BasePageProcessor... processors) {
+        ArticleScheduler scheduler = new ArticleScheduler(5, TimeUnit.SECONDS);
+        BasePagePipeline pipeline = new BasePagePipeline();
+        for (BasePageProcessor processor : processors) {
+            logger.debug("run task {}", processor.toString());
+            Spider spider = Spider.create(processor)
+                    .addPipeline(pipeline)
+                    .addUrl(processor.getStartUrls())
+                    .setScheduler(scheduler);
+            runAndWaitSpiderDone(spider);
+        }
+    }
+
+    private static void runAndWaitSpiderDone(Spider spider) {
+        spider.setEmptySleepTime(3000);
+        spider.thread(10);
+        spider.run();
     }
 }
