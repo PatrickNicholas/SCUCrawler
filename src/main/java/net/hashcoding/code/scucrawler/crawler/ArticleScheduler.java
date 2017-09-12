@@ -13,10 +13,12 @@ import us.codecraft.webmagic.scheduler.MonitorableScheduler;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ArticleScheduler extends DuplicateRemovedScheduler implements MonitorableScheduler {
     private static final Logger logger = LoggerFactory.getLogger(ArticleScheduler.class);
 
+    private AtomicInteger waitCount = new AtomicInteger(0);
     private TimeUnit timeUnit;
     private long pollTimeout;
     private BlockingQueue<Request> queue = new LinkedBlockingQueue<Request>();
@@ -28,6 +30,9 @@ public class ArticleScheduler extends DuplicateRemovedScheduler implements Monit
 
     @Override
     public Request poll(Task task) {
+        if (waitCount.get() == 0)
+            return null;
+
         try {
             return queue.poll(pollTimeout, timeUnit);
         } catch (InterruptedException e) {
@@ -48,8 +53,7 @@ public class ArticleScheduler extends DuplicateRemovedScheduler implements Monit
 
     @Override
     public void pushWhenNoDuplicate(Request request, Task task) {
-        // TODO: change poll(timeout, TimeUnit.SECOND) to tick count.
-//        ArticleScheduler.super.pushWhenNoDuplicate(request, task);
+        waitCount.incrementAndGet();
         String url = request.getUrl();
         Network.getArticleService()
                 .isUrlExists(url)
@@ -60,19 +64,20 @@ public class ArticleScheduler extends DuplicateRemovedScheduler implements Monit
     }
 
     private void success(Result<Boolean> result, Request request, Task task) {
+        waitCount.decrementAndGet();
         String url = request.getUrl();
         if (result.getCode() == 200) {
             if (!result.getData()) {
                 pushWithBlocking(request, task);
-                // System.out.println("insert -----> " + url);
             }
         } else {
-            failed(request.getUrl(), "Status code "
-                    + String.valueOf(result.getCode()) + " -> " + result.getDetailMessage());
+            logger.error("Validate url: {} failed, with message: Status code {} -> {} ",
+                    request.getUrl(), String.valueOf(result.getCode()), result.getDetailMessage());
         }
     }
 
     private void failed(String url, String message) {
+        waitCount.decrementAndGet();
         logger.error("Validate url: " + url + "failed, with message {}", message);
     }
 
