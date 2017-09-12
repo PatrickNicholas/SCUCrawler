@@ -110,7 +110,10 @@ public class HtmlBeautySolver implements PageSolver {
                 .removeAttr("class")
                 .removeAttr("lang")
                 .removeAttr("name")
-                .removeAttr("id");
+                .removeAttr("id")
+                .removeAttr("width")
+                .removeAttr("height")
+                .removeAttr("border");
     }
 
     private void removeIllegalElements(Element element) {
