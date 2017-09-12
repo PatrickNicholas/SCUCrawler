@@ -21,8 +21,11 @@ public class BasePagePipeline implements Pipeline {
         String type = resultItems.get("type");
         String title = ifAbsence(resultItems.get("title"));
         String content = ifAbsence(resultItems.get("content"));
+        Date date = resultItems.get("createdAt");
+        if (date == null)
+            date = new Date();
         Page page = Page.create(type, url, "", title,
-                content, new Date(), new ArrayList<>(), new ArrayList<>());
+                content, date, new ArrayList<>(), new ArrayList<>());
 
         PageFactory.solve(host, page);
     }
