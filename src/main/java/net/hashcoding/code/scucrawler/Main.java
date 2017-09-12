@@ -12,7 +12,9 @@ import net.hashcoding.code.scucrawler.crawler.task.pages.CSPage;
 import net.hashcoding.code.scucrawler.crawler.task.pages.JWCPage;
 import net.hashcoding.code.scucrawler.crawler.task.pages.QCCDPage;
 import net.hashcoding.code.scucrawler.crawler.task.pages.XGBPage;
-import net.hashcoding.code.scucrawler.crawler.task.processor.EmployPageProcessor;
+import net.hashcoding.code.scucrawler.crawler.task.processor.CareerTalkPageProcessor;
+import net.hashcoding.code.scucrawler.crawler.task.processor.PracticePageProcessor;
+import net.hashcoding.code.scucrawler.crawler.task.processor.RecruitPageProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import us.codecraft.webmagic.Spider;
@@ -36,7 +38,11 @@ public class Main {
                 new QCCDPage(),
                 new XGBPage()
         );
-        delegate(new EmployPageProcessor());
+        delegate(
+                new PracticePageProcessor(),
+                new CareerTalkPageProcessor(),
+                new RecruitPageProcessor()
+        );
 
         logger.debug("wait for PageFactory close");
         PageFactory.exit();
