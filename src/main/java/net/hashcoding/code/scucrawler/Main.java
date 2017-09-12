@@ -8,10 +8,7 @@ import net.hashcoding.code.scucrawler.crawler.processor.pipeline.BasePagePipelin
 import net.hashcoding.code.scucrawler.crawler.processor.solver.HtmlBeautySolver;
 import net.hashcoding.code.scucrawler.crawler.task.BasePage;
 import net.hashcoding.code.scucrawler.crawler.task.BasePageProcessor;
-import net.hashcoding.code.scucrawler.crawler.task.pages.CSPage;
-import net.hashcoding.code.scucrawler.crawler.task.pages.JWCPage;
-import net.hashcoding.code.scucrawler.crawler.task.pages.QCCDPage;
-import net.hashcoding.code.scucrawler.crawler.task.pages.XGBPage;
+import net.hashcoding.code.scucrawler.crawler.task.pages.*;
 import net.hashcoding.code.scucrawler.crawler.task.processor.CareerTalkPageProcessor;
 import net.hashcoding.code.scucrawler.crawler.task.processor.PracticePageProcessor;
 import net.hashcoding.code.scucrawler.crawler.task.processor.RecruitPageProcessor;
@@ -36,7 +33,8 @@ public class Main {
                 new CSPage(),
                 new JWCPage(),
                 new QCCDPage(),
-                new XGBPage()
+                new XGBPage(),
+                new CSRecruitPage()
         );
         delegate(
                 new PracticePageProcessor(),
