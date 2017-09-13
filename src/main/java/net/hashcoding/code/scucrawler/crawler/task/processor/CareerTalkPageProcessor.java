@@ -5,7 +5,10 @@ import org.apache.commons.lang3.StringUtils;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class CareerTalkPageProcessor extends BasePageProcessor {
@@ -55,7 +58,7 @@ public class CareerTalkPageProcessor extends BasePageProcessor {
     private void processCareerTalk(Page page) {
         String titlePattern = "//div[@class='content']/regex('<td.*(?=>)>主题</td>\\s+<td.*(?=>)>\\s+(\\S+)\\s+</td>', 1)";
         String contentPattern = "//div[@class='content']//div[@class='bd_one']/html()";
-
+        String timePattern = "//table[@id='zpxxtab']/regex('<td\\s+class=\"td_border_two\">(\\d+-\\d+-\\d+(&nbsp;)+\\d+：\\d+)', 1)";
         List<String> contents = page.getHtml().xpath(contentPattern).all();
 
         String url = page.getUrl().toString();
@@ -65,7 +68,17 @@ public class CareerTalkPageProcessor extends BasePageProcessor {
         page.getResultItems().put("content", content);
         page.getResultItems().put("url", url);
         page.getResultItems().put("type", "川大宣讲会");
-//        System.out.println("川大宣讲会" + " -> " + title);
+
+        String time = page.getHtml().xpath(timePattern).toString();
+        time = time.replaceAll("(&nbsp;)+", " ");
+        time = time.replaceAll("：", ":");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        try {
+            Date date = dateFormat.parse(time);
+            page.getResultItems().put("createdAt", date);
+        } catch (ParseException e) {
+            /* ignore */
+        }
     }
 
     @Override
