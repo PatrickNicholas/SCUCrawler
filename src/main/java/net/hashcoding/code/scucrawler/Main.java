@@ -55,27 +55,25 @@ public class Main {
     }
 
     private static void delegate(BasePage... pages) {
-        ArticleScheduler scheduler = new ArticleScheduler(5, TimeUnit.SECONDS);
         BasePageModelPipeline pipeline = new BasePageModelPipeline();
         for (BasePage page : pages) {
             logger.debug("run task {}", page.toString());
 
             Spider spider = OOSpider.create(page.getSite(), pipeline, page.getClass())
-                    .setScheduler(scheduler)
+                    .setScheduler(new ArticleScheduler())
                     .addUrl(page.getStartUrls());
             runAndWaitSpiderDone(spider);
         }
     }
 
     private static void delegate(BasePageProcessor... processors) {
-        ArticleScheduler scheduler = new ArticleScheduler(5, TimeUnit.SECONDS);
         BasePagePipeline pipeline = new BasePagePipeline();
         for (BasePageProcessor processor : processors) {
             logger.debug("run task {}", processor.toString());
             Spider spider = Spider.create(processor)
                     .addPipeline(pipeline)
                     .addUrl(processor.getStartUrls())
-                    .setScheduler(scheduler);
+                    .setScheduler(new ArticleScheduler());
             runAndWaitSpiderDone(spider);
         }
     }

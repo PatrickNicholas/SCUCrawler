@@ -104,7 +104,7 @@ public class PagePersistence {
                 page.thumbnail = "";
             }
             if (StringUtils.isEmpty(page.content)) {
-                page.content = "<<no data>>";
+                page.content = "<p>No content here.</p>";
             }
 
             send(page);

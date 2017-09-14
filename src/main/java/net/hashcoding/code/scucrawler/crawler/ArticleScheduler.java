@@ -10,34 +10,35 @@ import us.codecraft.webmagic.Task;
 import us.codecraft.webmagic.scheduler.DuplicateRemovedScheduler;
 import us.codecraft.webmagic.scheduler.MonitorableScheduler;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class ArticleScheduler extends DuplicateRemovedScheduler implements MonitorableScheduler {
     private static final Logger logger = LoggerFactory.getLogger(ArticleScheduler.class);
 
-    private AtomicInteger waitCount = new AtomicInteger(0);
-    private TimeUnit timeUnit;
-    private long pollTimeout;
-    private BlockingQueue<Request> queue = new LinkedBlockingQueue<Request>();
+    private int validatingCount = 0;
+    private Queue<Request> queue = new LinkedList<>();
+    private ReentrantLock lock = new ReentrantLock();
+    private Condition condition = lock.newCondition();
 
-    public ArticleScheduler(long timeout, TimeUnit timeUnit) {
-        this.pollTimeout = timeout;
-        this.timeUnit = timeUnit;
+    public ArticleScheduler() {
     }
 
     @Override
     public Request poll(Task task) {
-        if (waitCount.get() == 0)
-            return null;
-
+        lock.lock();
         try {
-            return queue.poll(pollTimeout, timeUnit);
+            while (queue.isEmpty() && validatingCount != 0) {
+                condition.await();
+            }
+            return queue.poll();
         } catch (InterruptedException e) {
             logger.error("Thread interrupted when poll", e);
             return null;
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -53,7 +54,10 @@ public class ArticleScheduler extends DuplicateRemovedScheduler implements Monit
 
     @Override
     public void pushWhenNoDuplicate(Request request, Task task) {
-        waitCount.incrementAndGet();
+        lock.lock();
+        validatingCount++;
+        lock.unlock();
+
         String url = request.getUrl();
         Network.getArticleService()
                 .isUrlExists(url)
@@ -64,24 +68,34 @@ public class ArticleScheduler extends DuplicateRemovedScheduler implements Monit
     }
 
     private void success(Result<Boolean> result, Request request, Task task) {
-        waitCount.decrementAndGet();
-        String url = request.getUrl();
-        if (result.getCode() == 200) {
-            if (!result.getData()) {
-                pushWithBlocking(request, task);
+        lock.lock();
+        try {
+            String url = request.getUrl();
+            if (result.getCode() == 200) {
+                if (!result.getData()) {
+                    queue.offer(request);
+                }
+            } else {
+                logger.error("Validate url: {} failed, with message: Status code {} -> {} ",
+                        url, String.valueOf(result.getCode()), result.getDetailMessage());
             }
-        } else {
-            logger.error("Validate url: {} failed, with message: Status code {} -> {} ",
-                    request.getUrl(), String.valueOf(result.getCode()), result.getDetailMessage());
+
+            validatingCount--;
+            condition.signal();
+        } finally {
+            lock.unlock();
         }
     }
 
     private void failed(String url, String message) {
-        waitCount.decrementAndGet();
-        logger.error("Validate url: " + url + "failed, with message {}", message);
-    }
+        lock.lock();
+        try {
+            logger.error("Validate url: " + url + "failed, with message {}", message);
 
-    private void pushWithBlocking(Request request, Task task) {
-        queue.offer(request);
+            validatingCount--;
+            condition.signal();
+        } finally {
+            lock.unlock();
+        }
     }
 }
