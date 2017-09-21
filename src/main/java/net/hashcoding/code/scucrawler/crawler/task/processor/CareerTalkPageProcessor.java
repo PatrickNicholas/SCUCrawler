@@ -3,6 +3,7 @@ package net.hashcoding.code.scucrawler.crawler.task.processor;
 import net.hashcoding.code.scucrawler.crawler.task.BasePageProcessor;
 import org.apache.commons.lang3.StringUtils;
 import us.codecraft.webmagic.Page;
+import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Site;
 
 import java.text.ParseException;
@@ -10,13 +11,23 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CareerTalkPageProcessor extends BasePageProcessor {
-    private static final String helperUrl = "http://jy.scu.edu.cn/eweb/jygl/zpfw.so?modcode=jygl_xjhxxck&subsyscode=zpfw&type=searchXjhxx&xjhType=all";
+    private static final String[] helperUrl = {
+            "http://jy.scu.edu.cn/eweb/jygl/zpfw.so?modcode=jygl_xjhxxck&subsyscode=zpfw&type=searchXjhxx&xjhType=jt",
+            "http://jy.scu.edu.cn/eweb/jygl/zpfw.so?modcode=jygl_xjhxxck&subsyscode=zpfw&type=searchXjhxx&xjhType=mt"
+    };
+    private static final String[] nextPage = {
+            "http://jy.scu.edu.cn/eweb/wfc/app/pager.so?type=goPager&requestPager=pager&pageMethod=next&currentPage=1"
+    };
+
     private static final String[] CAREER_TALK_TARGET_URLS = {
             "http://jy\\.scu\\.edu\\.cn/eweb/jygl/zpfw\\.so\\?modcode=jygl_xjhxxck&subsyscode=zpfw&type=viewXjhxx&id=\\w+"
     };
 
+    private String cookie = "";
     private List<Extractor> extractors = new ArrayList<>();
 
     public CareerTalkPageProcessor() {
@@ -25,19 +36,32 @@ public class CareerTalkPageProcessor extends BasePageProcessor {
 
     @Override
     public void process(Page page) {
-        if (page.getUrl().toString().equals(helperUrl)) {
-            processHelperUrl(page);
-        } else {
-            for (Extractor extractor : extractors) {
-                if (extractor.isMatch(page)) {
-                    extractor.extract(page);
-                    break;
-                }
-            }
-            if (page.getResultItems().getAll().size() == 0) {
-                page.getResultItems().setSkip(true);
+        String url = page.getUrl().toString();
+        for (String str : helperUrl) {
+            if (str.equals(url)) {
+                processHelperUrl(page);
+                processNextPager(page);
+                return;
             }
         }
+
+        for (String next : nextPage) {
+            if (next.equals(url)) {
+                processHelperUrl(page);
+                return;
+            }
+        }
+
+        for (Extractor extractor : extractors) {
+            if (extractor.isMatch(page)) {
+                extractor.extract(page);
+                break;
+            }
+        }
+        if (page.getResultItems().getAll().size() == 0) {
+            page.getResultItems().setSkip(true);
+        }
+
     }
 
     private void parseCareerTalkUrls(Page page) {
@@ -53,6 +77,24 @@ public class CareerTalkPageProcessor extends BasePageProcessor {
         page.setSkip(true);
 
         parseCareerTalkUrls(page);
+    }
+
+    private void processNextPager(Page page) {
+        if (StringUtils.isEmpty(cookie)) {
+            String setCookie = page.getHeaders().get("Set-Cookie").get(0);
+            Pattern pattern = Pattern.compile("JSESSIONID=(\\w+\\.\\w+);");
+            Matcher matcher = pattern.matcher(setCookie);
+            if (!matcher.find())
+                return;
+            cookie = matcher.group(1);
+
+            // Add next page.
+            for (String next : nextPage) {
+                Request request = new Request(next);
+                request.addCookie("JSESSIONID", cookie);
+                page.addTargetRequest(request);
+            }
+        }
     }
 
     private void processCareerTalk(Page page) {
@@ -92,6 +134,6 @@ public class CareerTalkPageProcessor extends BasePageProcessor {
 
     @Override
     public String[] getStartUrls() {
-        return new String[]{helperUrl};
+        return helperUrl;
     }
 }
