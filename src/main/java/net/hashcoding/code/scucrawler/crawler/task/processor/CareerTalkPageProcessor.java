@@ -98,13 +98,13 @@ public class CareerTalkPageProcessor extends BasePageProcessor {
     }
 
     private void processCareerTalk(Page page) {
-        String titlePattern = "//div[@class='content']/regex('<td.*(?=>)>主题</td>\\s+<td.*(?=>)>\\s+(\\S+)\\s+</td>', 1)";
+        String titlePattern = "//div[@class='content']/regex('<td.*(?=>)>主题</td>\\s+<td.*(?=>)>\\s+([^<]+)\\s+</td>', 1)";
         String contentPattern = "//div[@class='content']//div[@class='bd_one']/html()";
         String timePattern = "//table[@id='zpxxtab']/regex('<td\\s+class=\"td_border_two\">(\\d+-\\d+-\\d+(&nbsp;)+\\d+：\\d+)', 1)";
         List<String> contents = page.getHtml().xpath(contentPattern).all();
 
         String url = page.getUrl().toString();
-        String title = page.getHtml().xpath(titlePattern).toString();
+        String title = page.getHtml().xpath(titlePattern).toString().trim();
         String content = StringUtils.join(contents, ' ');
         page.getResultItems().put("title", title);
         page.getResultItems().put("content", content);
